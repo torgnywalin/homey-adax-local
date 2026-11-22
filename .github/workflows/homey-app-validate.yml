@@ -10,6 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # TypeScript app: install dev dependencies (typescript, @tsconfig/node22, types)
+      # so the Homey CLI can compile it.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
       - uses: athombv/github-action-homey-app-validate@master
         with:
           level: verified
