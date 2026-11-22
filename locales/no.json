@@ -1,0 +1,53 @@
+{
+  "errors": {
+    "invalid_ip": "Skriv inn en gyldig IPv4-adresse, f.eks. 192.168.1.50",
+    "missing_token": "Skriv inn tokenet",
+    "missing_ssid": "Skriv inn navnet på WiFi-nettet",
+    "invalid_wifi": "Ovnen kom seg ikke på WiFi. Sjekk nettverksnavn og passord, og at nettet er 2,4 GHz.",
+    "write_without_response": "Denne ovnen godtar bare en type Bluetooth-skriving som Homey ikke støtter. Bruk «Manuelt oppsett» i stedet (sett opp ovnen fra en datamaskin).",
+    "heater_not_found": "Fant ikke ovnen over Bluetooth. Sjekk at den blå lampen blinker, og at ovnen står nær Homey.",
+    "unauthorized": "Ovnen avviste tokenet. Reparer enheten og sett den opp på nytt over Bluetooth.",
+    "http": "Ovnen svarte med en feil (HTTP __status__). Prøv å slå ovnen av og på, eller reparer enheten.",
+    "no_answer": "Ingen svar fra ovnen på __ip__ (__message__).",
+    "not_found_on_network": "Fant ikke ovnen på nettverket. Sjekk at den er slått på, eller sett den opp på nytt over Bluetooth.",
+    "unreachable": "Ovnen svarer ikke. Homey prøver igjen og søker etter ny IP-adresse på nettverket.",
+    "not_confirmed": "Ovnen bekreftet ikke den nye temperaturen",
+    "write_timeout": "Ovnen på __ip__ svarte ikke i tide. Sjekk at den er slått på og har WiFi, og prøv igjen."
+  },
+  "pair": {
+    "title": "Sett opp Adax-ovn",
+    "intro": "Ovnen settes opp lokalt. Den fjernes fra Adax-appen, og Adax-appen kan ikke lenger styre den.",
+    "step_reset": "Tilbakestill ovnen: trykk + og OK til displayet viser «Reset».",
+    "step_ble": "Hold deretter OK inne til den blå lampen begynner å blinke.",
+    "step_near": "Ha ovnen (eller termostaten) nær Homey – Bluetooth har kort rekkevidde.",
+    "step_dhcp": "Tips: gi ovnen fast IP-adresse (DHCP-reservasjon) i ruteren etterpå.",
+    "start_ble": "Sett opp via Bluetooth",
+    "start_manual": "Manuelt oppsett (IP og token)",
+    "scan": "Søk etter ovner",
+    "scanning": "Søker etter ovner over Bluetooth…",
+    "no_heaters": "Fant ingen Adax-ovner. Sjekk at den blå lampen blinker, og søk igjen.",
+    "untested_type": "utestet type",
+    "not_in_pairing_mode": "ikke i paringsmodus",
+    "heater": "Ovn",
+    "ssid": "WiFi-nett (2,4 GHz)",
+    "password": "WiFi-passord",
+    "connect": "Koble til ovnen",
+    "ip": "IP-adresse",
+    "token": "Token",
+    "manual_intro": "Bruk dette hvis ovnen allerede er satt opp med et token, f.eks. fra en datamaskin.",
+    "verify": "Koble til",
+    "progress": {
+      "connecting": "Kobler til ovnen over Bluetooth…",
+      "sending": "Sender WiFi-innstillinger…",
+      "waiting": "Venter på at ovnen kobler seg på WiFi (kan ta et minutt)…",
+      "verifying": "Sjekker at ovnen svarer på nettverket…"
+    },
+    "repair_intro": "Velg hvordan ovnen skal kobles til igjen.",
+    "rediscover": "Søk etter ovnen på nettverket",
+    "rediscover_intro": "Bruk dette hvis ovnen har fått ny IP-adresse.",
+    "reprovision": "Sett opp på nytt via Bluetooth",
+    "reprovision_intro": "Lager et nytt token. Tilbakestill ovnen først (se oppsettsinstruksjonene).",
+    "found_at": "Fant ovnen på __ip__",
+    "done": "Ferdig"
+  }
+}

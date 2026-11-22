@@ -1,0 +1,8 @@
+node_modules/
+.homeybuild/
+.test-build/
+env.json
+.DS_Store
+# Local notes, not part of the app
+nimbalyst-local/
+dhcp.md

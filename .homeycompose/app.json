@@ -1,0 +1,66 @@
+{
+  "id": "no.walin.adax",
+  "version": "1.0.0",
+  "compatibility": ">=12.9.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Adax Local",
+    "no": "Adax Lokal"
+  },
+  "description": {
+    "en": "Heat your home locally, without the cloud",
+    "no": "Varm opp hjemmet lokalt, uten skyen"
+  },
+  "category": [
+    "climate"
+  ],
+  "brandColor": "#8C2A2A",
+  "permissions": [
+    "homey:wireless:ble"
+  ],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Torgny Walin",
+    "email": "torgny@walin.no"
+  },
+  "support": "mailto:torgny@walin.no",
+  "tags": {
+    "en": [
+      "adax",
+      "heater",
+      "panel heater",
+      "local",
+      "thermostat"
+    ],
+    "no": [
+      "adax",
+      "ovn",
+      "panelovn",
+      "lokal",
+      "termostat"
+    ]
+  },
+  "contributors": {
+    "developers": [
+      {
+        "name": "Torgny Walin",
+        "email": "torgny@walin.no"
+      },
+      {
+        "name": "Daniel Hjelseth Høyer (pyAdaxLocal – protocol reference)"
+      }
+    ]
+  },
+  "source": "https://github.com/torgnywalin/homey-adax-local",
+  "homepage": "https://github.com/torgnywalin/homey-adax-local",
+  "bugs": {
+    "url": "https://github.com/torgnywalin/homey-adax-local/issues"
+  }
+}

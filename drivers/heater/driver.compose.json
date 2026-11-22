@@ -1,0 +1,66 @@
+{
+  "name": {
+    "en": "Adax heater (local)",
+    "no": "Adax-ovn (lokal)"
+  },
+  "class": "heater",
+  "capabilities": [
+    "onoff",
+    "target_temperature",
+    "measure_temperature",
+    "measure_power"
+  ],
+  "capabilitiesOptions": {
+    "target_temperature": {
+      "min": 5,
+      "max": 35,
+      "step": 1,
+      "decimals": 0
+    }
+  },
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "ble",
+    "lan"
+  ],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png",
+    "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
+  },
+  "pair": [
+    {
+      "id": "instructions"
+    },
+    {
+      "id": "wifi"
+    },
+    {
+      "id": "manual"
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      },
+      "options": {
+        "singular": true
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ],
+  "repair": [
+    {
+      "id": "repair"
+    },
+    {
+      "id": "wifi"
+    }
+  ]
+}

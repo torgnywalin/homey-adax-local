@@ -1,0 +1,3 @@
+Control your Adax WiFi heaters directly on your home network, without the Adax cloud and without an internet connection. Homey sets up each heater over Bluetooth and then talks to it locally, so changes are quick and keep working even if the internet is down. You can lock the heater or limit how much the temperature can be changed with its buttons, and enter the heater's power so Homey Energy can estimate its consumption.
+
+Heaters set up with this app are removed from the Adax app and can no longer be controlled from it. Supported are Adax heaters with a WiFi and Bluetooth thermostat (second and third generation) on a 2.4 GHz WiFi network.

@@ -1,0 +1,26 @@
+{
+  "name": "no.walin.adax",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local control of Adax WiFi heaters for Homey Pro",
+  "main": "app.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "rm -rf .test-build && tsc -p tsconfig.test.json && node --test \".test-build/test/*.test.js\"",
+    "lint": "tsc --noEmit",
+    "deploy": "npm test && homey app install",
+    "dev": "homey app run --remote"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.7",
+    "@types/homey": "npm:homey-apps-sdk-v3-types@^1.8.3",
+    "@types/node": "^22.20.5",
+    "homey": "^4.6.3",
+    "typescript": "^5.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/torgnywalin/homey-adax-local.git"
+  },
+  "license": "MIT"
+}

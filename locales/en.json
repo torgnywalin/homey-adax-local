@@ -1,0 +1,53 @@
+{
+  "errors": {
+    "invalid_ip": "Enter a valid IPv4 address, e.g. 192.168.1.50",
+    "missing_token": "Enter the token",
+    "missing_ssid": "Enter the WiFi network name",
+    "invalid_wifi": "The heater could not join the WiFi network. Check the network name and password, and that it is a 2.4 GHz network.",
+    "write_without_response": "This heater only accepts Bluetooth writes Homey does not support. Use \"Manual setup\" instead (provision the heater from a computer).",
+    "heater_not_found": "Heater not found over Bluetooth. Make sure the blue LED is blinking and that the heater is close to Homey.",
+    "unauthorized": "The heater rejected the token. Repair the device and set it up again over Bluetooth.",
+    "http": "The heater responded with an error (HTTP __status__). Try power cycling the heater, or repair the device.",
+    "no_answer": "No answer from the heater at __ip__ (__message__).",
+    "not_found_on_network": "The heater was not found on the network. Check that it is powered on, or set it up again over Bluetooth.",
+    "unreachable": "The heater is unreachable. Homey will keep trying, and search the network for a new IP address.",
+    "not_confirmed": "The heater did not confirm the new temperature",
+    "write_timeout": "The heater at __ip__ did not respond in time. Check that it is powered on and has WiFi, then try again."
+  },
+  "pair": {
+    "title": "Set up Adax heater",
+    "intro": "The heater is set up locally. It will be removed from the Adax app, and the Adax app will no longer control it.",
+    "step_reset": "Reset the heater: press + and OK until the display shows \"Reset\".",
+    "step_ble": "Then press and hold OK until the blue LED starts blinking.",
+    "step_near": "Keep the heater (or its thermostat) close to Homey – Bluetooth range is short.",
+    "step_dhcp": "Tip: give the heater a fixed IP address (DHCP reservation) in your router afterwards.",
+    "start_ble": "Set up over Bluetooth",
+    "start_manual": "Manual setup (IP and token)",
+    "scan": "Search for heaters",
+    "scanning": "Searching for heaters over Bluetooth…",
+    "no_heaters": "No Adax heaters found. Make sure the blue LED is blinking, and search again.",
+    "untested_type": "untested type",
+    "not_in_pairing_mode": "not in pairing mode",
+    "heater": "Heater",
+    "ssid": "WiFi network (2.4 GHz)",
+    "password": "WiFi password",
+    "connect": "Connect heater",
+    "ip": "IP address",
+    "token": "Token",
+    "manual_intro": "Use this if the heater has already been provisioned with a token, e.g. from a computer.",
+    "verify": "Connect",
+    "progress": {
+      "connecting": "Connecting to the heater over Bluetooth…",
+      "sending": "Sending WiFi settings…",
+      "waiting": "Waiting for the heater to join WiFi (this can take a minute)…",
+      "verifying": "Checking that the heater answers on the network…"
+    },
+    "repair_intro": "Choose how to reconnect the heater.",
+    "rediscover": "Search the network for the heater",
+    "rediscover_intro": "Use this if the heater has got a new IP address.",
+    "reprovision": "Set up again over Bluetooth",
+    "reprovision_intro": "Creates a new token. Reset the heater first (see the setup instructions).",
+    "found_at": "Heater found at __ip__",
+    "done": "Done"
+  }
+}

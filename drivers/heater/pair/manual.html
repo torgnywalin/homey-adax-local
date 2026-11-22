@@ -1,0 +1,33 @@
+<header class="homey-header">
+  <h1 class="homey-title" data-i18n="pair.start_manual"></h1>
+  <p class="homey-subtitle" data-i18n="pair.manual_intro"></p>
+</header>
+
+<form class="homey-form" onsubmit="return false">
+  <div class="homey-form-group">
+    <label class="homey-form-label" for="ip" data-i18n="pair.ip"></label>
+    <input class="homey-form-input" id="ip" type="text" inputmode="decimal" placeholder="192.168.1.50" />
+  </div>
+  <div class="homey-form-group">
+    <label class="homey-form-label" for="token" data-i18n="pair.token"></label>
+    <input class="homey-form-input" id="token" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" />
+  </div>
+  <button id="verify" type="button" class="homey-button-primary-full" data-i18n="pair.verify"></button>
+</form>
+
+<script type="application/javascript">
+  const verifyButton = document.getElementById('verify');
+  verifyButton.addEventListener('click', async () => {
+    verifyButton.disabled = true;
+    try {
+      await Homey.emit('manual', {
+        ip: document.getElementById('ip').value,
+        token: document.getElementById('token').value,
+      });
+      Homey.showView('list_devices');
+    } catch (err) {
+      Homey.alert(err.message || String(err), 'error');
+      verifyButton.disabled = false;
+    }
+  });
+</script>

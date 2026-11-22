@@ -1,0 +1,26 @@
+<header class="homey-header">
+  <h1 class="homey-title" data-i18n="pair.title"></h1>
+  <p class="homey-subtitle" data-i18n="pair.intro"></p>
+</header>
+
+<ol class="adax-steps">
+  <li data-i18n="pair.step_reset"></li>
+  <li data-i18n="pair.step_ble"></li>
+  <li data-i18n="pair.step_near"></li>
+</ol>
+<p class="adax-tip" data-i18n="pair.step_dhcp"></p>
+
+<button id="start-ble" class="homey-button-primary-full" data-i18n="pair.start_ble"></button>
+<button id="start-manual" class="homey-button-secondary-full" data-i18n="pair.start_manual"></button>
+
+<style>
+  .adax-steps { margin: 0 0 1em 1.2em; line-height: 1.5; }
+  .adax-steps li { margin-bottom: 0.5em; }
+  .adax-tip { font-size: 0.9em; opacity: 0.8; margin-bottom: 1.5em; }
+  #start-manual { margin-top: 0.75em; }
+</style>
+
+<script type="application/javascript">
+  document.getElementById('start-ble').addEventListener('click', () => Homey.showView('wifi'));
+  document.getElementById('start-manual').addEventListener('click', () => Homey.showView('manual'));
+</script>

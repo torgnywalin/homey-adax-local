@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="960" viewBox="0 0 960 960">
+  <g fill="none" stroke="#000" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
+    <!-- thin panel seen slightly from the left and above: front face, top and right edge -->
+    <path d="M150 320 L730 260 L730 640 L150 700 Z"/>
+    <path d="M150 320 L200 290 L780 230 L730 260"/>
+    <path d="M780 230 L780 610 L730 640"/>
+    <!-- thermostat module -->
+    <path d="M560 310 L680 298 L680 368 L560 380 Z"/>
+    <!-- fins -->
+    <line x1="250" y1="365" x2="250" y2="640"/>
+    <line x1="350" y1="355" x2="350" y2="630"/>
+    <line x1="450" y1="345" x2="450" y2="620"/>
+    <!-- feet -->
+    <line x1="230" y1="692" x2="230" y2="770"/>
+    <line x1="660" y1="648" x2="660" y2="726"/>
+    <line x1="175" y1="776" x2="285" y2="764"/>
+    <line x1="605" y1="732" x2="715" y2="720"/>
+  </g>
+</svg>

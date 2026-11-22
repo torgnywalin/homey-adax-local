@@ -1,0 +1,42 @@
+<header class="homey-header">
+  <h1 class="homey-title" data-i18n="pair.title"></h1>
+  <p class="homey-subtitle" data-i18n="pair.repair_intro"></p>
+</header>
+
+<section class="adax-option">
+  <p data-i18n="pair.rediscover_intro"></p>
+  <p id="status" class="adax-status"></p>
+  <button id="rediscover" class="homey-button-primary-full" data-i18n="pair.rediscover"></button>
+</section>
+
+<section class="adax-option">
+  <p data-i18n="pair.reprovision_intro"></p>
+  <button id="reprovision" class="homey-button-secondary-full" data-i18n="pair.reprovision"></button>
+</section>
+
+<style>
+  .adax-option { margin-bottom: 2em; }
+  .adax-status { min-height: 1.2em; font-size: 0.9em; opacity: 0.8; }
+</style>
+
+<script type="application/javascript">
+  const rediscoverButton = document.getElementById('rediscover');
+  const statusEl = document.getElementById('status');
+
+  rediscoverButton.addEventListener('click', async () => {
+    rediscoverButton.disabled = true;
+    statusEl.textContent = '…';
+    try {
+      const { ip } = await Homey.emit('rediscover');
+      statusEl.textContent = Homey.__('pair.found_at', { ip });
+      await Homey.alert(Homey.__('pair.found_at', { ip }), 'info');
+      Homey.done();
+    } catch (err) {
+      statusEl.textContent = '';
+      Homey.alert(err.message || String(err), 'error');
+      rediscoverButton.disabled = false;
+    }
+  });
+
+  document.getElementById('reprovision').addEventListener('click', () => Homey.showView('wifi'));
+</script>

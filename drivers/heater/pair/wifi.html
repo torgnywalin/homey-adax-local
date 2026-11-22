@@ -1,0 +1,121 @@
+<header class="homey-header">
+  <h1 class="homey-title" data-i18n="pair.start_ble"></h1>
+</header>
+
+<form id="form" class="homey-form" onsubmit="return false">
+  <fieldset class="homey-form-fieldset">
+    <legend class="homey-form-legend" data-i18n="pair.heater"></legend>
+    <div id="heaters"></div>
+    <p id="scan-status" class="adax-status"></p>
+    <button id="scan" type="button" class="homey-button-secondary-shadow" data-i18n="pair.scan"></button>
+  </fieldset>
+
+  <fieldset class="homey-form-fieldset">
+    <div class="homey-form-group">
+      <label class="homey-form-label" for="ssid" data-i18n="pair.ssid"></label>
+      <input class="homey-form-input" id="ssid" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" />
+    </div>
+    <div class="homey-form-group">
+      <label class="homey-form-label" for="password" data-i18n="pair.password"></label>
+      <input class="homey-form-input" id="password" type="password" autocomplete="off" />
+    </div>
+  </fieldset>
+
+  <p id="progress" class="adax-status"></p>
+  <button id="connect" type="button" class="homey-button-primary-full" data-i18n="pair.connect" disabled></button>
+</form>
+
+<style>
+  .adax-status { min-height: 1.2em; font-size: 0.9em; opacity: 0.8; margin: 0.5em 0; }
+  .adax-heater { display: flex; align-items: center; gap: 0.5em; padding: 0.4em 0; }
+  .adax-heater.unavailable { opacity: 0.5; }
+</style>
+
+<script type="application/javascript">
+  const heatersEl = document.getElementById('heaters');
+  const scanStatus = document.getElementById('scan-status');
+  const scanButton = document.getElementById('scan');
+  const connectButton = document.getElementById('connect');
+  const progressEl = document.getElementById('progress');
+  const ssidEl = document.getElementById('ssid');
+  const passwordEl = document.getElementById('password');
+
+  Homey.on('progress', (message) => { progressEl.textContent = message; });
+
+  function selectedHeater() {
+    const checked = document.querySelector('input[name="heater"]:checked');
+    return checked ? checked.value : null;
+  }
+
+  function updateConnectState() {
+    connectButton.disabled = !selectedHeater() || !ssidEl.value;
+  }
+
+  function renderHeaters(heaters) {
+    heatersEl.textContent = '';
+    const available = heaters.filter((h) => h.available);
+    heaters.forEach((h) => {
+      const row = document.createElement('label');
+      row.className = 'adax-heater' + (h.available ? '' : ' unavailable');
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'heater';
+      radio.value = h.peripheralUuid;
+      radio.disabled = !h.available;
+      radio.checked = h.available && available[0] === h;
+      radio.addEventListener('change', updateConnectState);
+      const text = document.createElement('span');
+      text.textContent = `${h.mac} · ${h.rssi} dBm · type ${h.type}`
+        + (h.knownType ? '' : ` (${Homey.__('pair.untested_type')})`)
+        + (h.available ? '' : ` (${Homey.__('pair.not_in_pairing_mode')})`);
+      row.appendChild(radio);
+      row.appendChild(text);
+      heatersEl.appendChild(row);
+    });
+    scanStatus.textContent = heaters.length === 0 ? Homey.__('pair.no_heaters') : '';
+    updateConnectState();
+  }
+
+  async function scan() {
+    scanButton.disabled = true;
+    heatersEl.textContent = '';
+    scanStatus.textContent = Homey.__('pair.scanning');
+    try {
+      renderHeaters(await Homey.emit('scan'));
+    } catch (err) {
+      scanStatus.textContent = err.message || String(err);
+    } finally {
+      scanButton.disabled = false;
+    }
+  }
+
+  async function connect() {
+    const peripheralUuid = selectedHeater();
+    if (!peripheralUuid) return;
+    connectButton.disabled = true;
+    scanButton.disabled = true;
+    try {
+      const result = await Homey.emit('provision', {
+        peripheralUuid,
+        ssid: ssidEl.value,
+        password: passwordEl.value,
+      });
+      if (result && result.repaired) {
+        Homey.done();
+      } else {
+        Homey.showView('list_devices');
+      }
+    } catch (err) {
+      progressEl.textContent = '';
+      Homey.alert(err.message || String(err), 'error');
+      connectButton.disabled = false;
+      scanButton.disabled = false;
+      updateConnectState();
+    }
+  }
+
+  ssidEl.addEventListener('input', updateConnectState);
+  scanButton.addEventListener('click', scan);
+  connectButton.addEventListener('click', connect);
+  scan();
+</script>

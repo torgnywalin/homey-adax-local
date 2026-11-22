@@ -1,0 +1,253 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "no.walin.adax",
+  "version": "1.0.0",
+  "compatibility": ">=12.9.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Adax Local",
+    "no": "Adax Lokal"
+  },
+  "description": {
+    "en": "Heat your home locally, without the cloud",
+    "no": "Varm opp hjemmet lokalt, uten skyen"
+  },
+  "category": [
+    "climate"
+  ],
+  "brandColor": "#8C2A2A",
+  "permissions": [
+    "homey:wireless:ble"
+  ],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Torgny Walin",
+    "email": "torgny@walin.no"
+  },
+  "support": "mailto:torgny@walin.no",
+  "tags": {
+    "en": [
+      "adax",
+      "heater",
+      "panel heater",
+      "local",
+      "thermostat"
+    ],
+    "no": [
+      "adax",
+      "ovn",
+      "panelovn",
+      "lokal",
+      "termostat"
+    ]
+  },
+  "contributors": {
+    "developers": [
+      {
+        "name": "Torgny Walin",
+        "email": "torgny@walin.no"
+      },
+      {
+        "name": "Daniel Hjelseth Høyer (pyAdaxLocal – protocol reference)"
+      }
+    ]
+  },
+  "source": "https://github.com/torgnywalin/homey-adax-local",
+  "homepage": "https://github.com/torgnywalin/homey-adax-local",
+  "bugs": {
+    "url": "https://github.com/torgnywalin/homey-adax-local/issues"
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "Adax heater (local)",
+        "no": "Adax-ovn (lokal)"
+      },
+      "class": "heater",
+      "capabilities": [
+        "onoff",
+        "target_temperature",
+        "measure_temperature",
+        "measure_power"
+      ],
+      "capabilitiesOptions": {
+        "target_temperature": {
+          "min": 5,
+          "max": 35,
+          "step": 1,
+          "decimals": 0
+        }
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "ble",
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/heater/assets/images/small.png",
+        "large": "/drivers/heater/assets/images/large.png",
+        "xlarge": "/drivers/heater/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "instructions"
+        },
+        {
+          "id": "wifi"
+        },
+        {
+          "id": "manual"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "singular": true
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "repair"
+        },
+        {
+          "id": "wifi"
+        }
+      ],
+      "id": "heater",
+      "settings": [
+        {
+          "id": "ip",
+          "type": "text",
+          "label": {
+            "en": "IP address",
+            "no": "IP-adresse"
+          },
+          "value": "",
+          "hint": {
+            "en": "The heater's IP address. Give the heater a fixed IP (DHCP reservation) in your router.",
+            "no": "Ovnens IP-adresse. Gi ovnen fast IP (DHCP-reservasjon) i ruteren."
+          }
+        },
+        {
+          "id": "local_changes",
+          "type": "dropdown",
+          "label": {
+            "en": "Changes on the heater",
+            "no": "Endringer på ovnen"
+          },
+          "value": "allow",
+          "values": [
+            {
+              "id": "allow",
+              "label": {
+                "en": "Allow",
+                "no": "Tillat"
+              }
+            },
+            {
+              "id": "limit",
+              "label": {
+                "en": "Limit ±3 °C",
+                "no": "Begrens ±3 °C"
+              }
+            },
+            {
+              "id": "lock",
+              "label": {
+                "en": "Lock",
+                "no": "Lås"
+              }
+            }
+          ],
+          "hint": {
+            "en": "What happens when someone uses the buttons on the heater. Limit: the temperature may be adjusted ±3 °C from the value set in Homey (on/off is allowed). Lock: every change is reverted to the Homey value. Corrections happen at the next poll (30–60 s), as the heater has no lock of its own in local mode.",
+            "no": "Hva som skjer når noen bruker knappene på ovnen. Begrens: temperaturen kan justeres ±3 °C fra verdien satt i Homey (av/på er tillatt). Lås: alle endringer settes tilbake til Homey-verdien. Rettingen skjer ved neste avlesning (30–60 s), siden ovnen ikke har egen lås i lokal modus."
+          }
+        },
+        {
+          "id": "rated_power",
+          "type": "number",
+          "label": {
+            "en": "Heater power",
+            "no": "Ovnens effekt"
+          },
+          "value": 0,
+          "min": 0,
+          "max": 5000,
+          "step": 50,
+          "units": {
+            "en": "W",
+            "no": "W"
+          },
+          "hint": {
+            "en": "The heater's rated power (see the label on the heater). Homey shows this power while the heater is heating (on and below target temperature) and calculates energy from it. 0 = not set. This is an estimate: the heater does not measure power.",
+            "no": "Ovnens merkeeffekt (se merkeskiltet på ovnen). Homey viser denne effekten mens ovnen varmer (på og under måltemperatur), og regner ut energi fra den. 0 = ikke satt. Dette er et estimat: ovnen måler ikke effekt."
+          }
+        },
+        {
+          "id": "poll_interval",
+          "type": "number",
+          "label": {
+            "en": "Poll interval",
+            "no": "Oppdateringsintervall"
+          },
+          "value": 60,
+          "min": 30,
+          "max": 600,
+          "units": {
+            "en": "seconds",
+            "no": "sekunder"
+          },
+          "hint": {
+            "en": "How often Homey reads the temperature. Too frequent polling can make the heater unstable.",
+            "no": "Hvor ofte Homey leser temperaturen. For hyppig polling kan gjøre ovnen ustabil."
+          }
+        },
+        {
+          "id": "mac",
+          "type": "label",
+          "label": {
+            "en": "WiFi MAC",
+            "no": "WiFi-MAC"
+          },
+          "value": ""
+        },
+        {
+          "id": "model",
+          "type": "label",
+          "label": {
+            "en": "Model",
+            "no": "Modell"
+          },
+          "value": ""
+        },
+        {
+          "id": "firmware",
+          "type": "label",
+          "label": {
+            "en": "Firmware",
+            "no": "Firmware"
+          },
+          "value": ""
+        }
+      ]
+    }
+  ]
+}
