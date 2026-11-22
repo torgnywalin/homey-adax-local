@@ -21,8 +21,9 @@ The protocol is documented by Adax ([Local API User Guide](https://adax.no/wi-fi
 - Pairing over Bluetooth from Homey (or manually with IP + token)
 - On/off, target temperature (5–35 °C), measured temperature
 - **Changes on the heater:** allow / limit ±3 °C / lock — enforced by Homey at the next poll, since the local API has no lock
-- **Estimated power** from the heater's rated power (set in device settings); Homey Energy calculates kWh. The heater does not measure power, and `pow`/`energ` are always 0 locally.
-- Finds the heater again if its IP changes (scans the /24 for the Adax certificate, verifies with the token)
+- **Flow cards:** *The heater was changed outside Homey* (trigger, with the new temperature and whether Homey reverted it), *Changes on the heater are set to …* (condition) and *Set changes on the heater to …* (action, e.g. lock at night)
+- **Estimated power** from the heater's rated power (set in device settings); Homey Energy calculates kWh. The heater does not measure power, and `pow`/`energ` are always 0 locally. Without a rated power, no power is shown.
+- Finds the heater again if its IP changes: scans the /24 of the last known IP and of Homey for the Adax certificate, and verifies with the token. One scan is shared by all heaters. Larger subnets (e.g. /16) are not searched — use a DHCP reservation.
 - Repair: search the network or provision again over Bluetooth
 
 ## Requirements
@@ -45,17 +46,18 @@ The blue LED may keep blinking after setup; power-cycling the heater fixes it.
 
 ```bash
 npm install
-npm test            # unit tests (protocol, policy, HTTPS mock heater)
+npm run lint        # type-check the whole app
+npm test            # unit tests (protocol, policy, controller, HTTPS mock heater)
 npm run dev         # run on your Homey Pro with live log (homey app run --remote)
 npm run deploy      # test + install permanently (homey app install)
-npx homey app validate --level publish
+npx homey app validate --level verified
 ```
 
 | Path | Contents |
 |---|---|
-| `lib/adax/` | Protocol library without Homey dependencies: advertisement parsing, join command + chunking, notifications, `LocalClient` (keep-alive, serialized requests, deadlines), network scan, lock/power policy. `BleProvisioner` uses Homey's BLE API. |
-| `drivers/heater/` | Driver (pairing, repair) and device (polling, background-confirmed writes, lock policy, power estimate). |
-| `test/` | `node:test` tests, including a mock heater over HTTPS with a self-signed certificate. |
+| `lib/adax/` | Protocol library without Homey dependencies: advertisement parsing, join command + chunking, notifications, `LocalClient` (keep-alive, serialized requests, deadlines), network scan, lock/power policy, and `HeaterController` (polling, background-confirmed writes, lock/limit enforcement, local change detection). `BleProvisioner` uses Homey's BLE API. |
+| `drivers/heater/` | Driver (pairing, repair, Flow cards, shared network scan) and device (Homey adapter for `HeaterController`: capabilities, settings, availability). |
+| `test/` | `node:test` tests, including a mock heater over HTTPS with a self-signed certificate and a fake heater for `HeaterController`. |
 
 ## License
 

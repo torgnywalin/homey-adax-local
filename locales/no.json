@@ -12,7 +12,8 @@
     "not_found_on_network": "Fant ikke ovnen på nettverket. Sjekk at den er slått på, eller sett den opp på nytt over Bluetooth.",
     "unreachable": "Ovnen svarer ikke. Homey prøver igjen og søker etter ny IP-adresse på nettverket.",
     "not_confirmed": "Ovnen bekreftet ikke den nye temperaturen",
-    "write_timeout": "Ovnen på __ip__ svarte ikke i tide. Sjekk at den er slått på og har WiFi, og prøv igjen."
+    "write_timeout": "Ovnen på __ip__ svarte ikke i tide. Sjekk at den er slått på og har WiFi, og prøv igjen.",
+    "invalid_password_length": "WiFi-passordet må være 8–63 tegn (eller 64 heksadesimale tegn). La feltet stå tomt for et åpent nett."
   },
   "pair": {
     "title": "Sett opp Adax-ovn",
@@ -48,6 +49,7 @@
     "reprovision": "Sett opp på nytt via Bluetooth",
     "reprovision_intro": "Lager et nytt token. Tilbakestill ovnen først (se oppsettsinstruksjonene).",
     "found_at": "Fant ovnen på __ip__",
-    "done": "Ferdig"
+    "done": "Ferdig",
+    "show_password": "Vis passord"
   }
 }

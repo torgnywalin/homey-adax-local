@@ -64,6 +64,154 @@
   "bugs": {
     "url": "https://github.com/torgnywalin/homey-adax-local/issues"
   },
+  "flow": {
+    "triggers": [
+      {
+        "id": "local_change",
+        "title": {
+          "en": "The heater was changed outside Homey",
+          "no": "Ovnen ble endret utenfor Homey"
+        },
+        "hint": {
+          "en": "Someone used the buttons on the heater. Detected at the next poll. With lock or limit, Homey reverts the change (see “Reverted by Homey”).",
+          "no": "Noen brukte knappene på ovnen. Oppdages ved neste avlesning. Med lås eller begrensning setter Homey endringen tilbake (se «Satt tilbake av Homey»)."
+        },
+        "tokens": [
+          {
+            "name": "temperature",
+            "type": "number",
+            "title": {
+              "en": "Temperature set on the heater (0 = off)",
+              "no": "Temperatur satt på ovnen (0 = av)"
+            },
+            "example": 22
+          },
+          {
+            "name": "corrected",
+            "type": "boolean",
+            "title": {
+              "en": "Reverted by Homey",
+              "no": "Satt tilbake av Homey"
+            },
+            "example": false
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=heater"
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "local_changes_is",
+        "title": {
+          "en": "Changes on the heater !{{are|are not}} set to …",
+          "no": "Endringer på ovnen !{{er|er ikke}} satt til …"
+        },
+        "titleFormatted": {
+          "en": "Changes on the heater !{{are|are not}} set to [[mode]]",
+          "no": "Endringer på ovnen !{{er|er ikke}} satt til [[mode]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=heater"
+          },
+          {
+            "name": "mode",
+            "type": "dropdown",
+            "title": {
+              "en": "Changes on the heater",
+              "no": "Endringer på ovnen"
+            },
+            "values": [
+              {
+                "id": "allow",
+                "title": {
+                  "en": "Allow",
+                  "no": "Tillat"
+                }
+              },
+              {
+                "id": "limit",
+                "title": {
+                  "en": "Limit ±3 °C",
+                  "no": "Begrens ±3 °C"
+                }
+              },
+              {
+                "id": "lock",
+                "title": {
+                  "en": "Lock",
+                  "no": "Lås"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "set_local_changes",
+        "title": {
+          "en": "Set changes on the heater to …",
+          "no": "Sett endringer på ovnen til …"
+        },
+        "titleFormatted": {
+          "en": "Set changes on the heater to [[mode]]",
+          "no": "Sett endringer på ovnen til [[mode]]"
+        },
+        "hint": {
+          "en": "Lock or limit the buttons on the heater, e.g. at night. The current temperature is kept.",
+          "no": "Lås eller begrens knappene på ovnen, f.eks. om natten. Gjeldende temperatur beholdes."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=heater"
+          },
+          {
+            "name": "mode",
+            "type": "dropdown",
+            "title": {
+              "en": "Changes on the heater",
+              "no": "Endringer på ovnen"
+            },
+            "values": [
+              {
+                "id": "allow",
+                "title": {
+                  "en": "Allow",
+                  "no": "Tillat"
+                }
+              },
+              {
+                "id": "limit",
+                "title": {
+                  "en": "Limit ±3 °C",
+                  "no": "Begrens ±3 °C"
+                }
+              },
+              {
+                "id": "lock",
+                "title": {
+                  "en": "Lock",
+                  "no": "Lås"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "drivers": [
     {
       "name": {
@@ -197,8 +345,8 @@
             "no": "W"
           },
           "hint": {
-            "en": "The heater's rated power (see the label on the heater). Homey shows this power while the heater is heating (on and below target temperature) and calculates energy from it. 0 = not set. This is an estimate: the heater does not measure power.",
-            "no": "Ovnens merkeeffekt (se merkeskiltet på ovnen). Homey viser denne effekten mens ovnen varmer (på og under måltemperatur), og regner ut energi fra den. 0 = ikke satt. Dette er et estimat: ovnen måler ikke effekt."
+            "en": "The heater's rated power (see the label on the heater). Homey shows this power while the heater is heating (on and below target temperature) and calculates energy from it. 0 = not set (no power is shown). This is an estimate: the heater does not measure power.",
+            "no": "Ovnens merkeeffekt (se merkeskiltet på ovnen). Homey viser denne effekten mens ovnen varmer (på og under måltemperatur), og regner ut energi fra den. 0 = ikke satt (ingen effekt vises). Dette er et estimat: ovnen måler ikke effekt."
           }
         },
         {

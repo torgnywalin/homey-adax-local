@@ -12,7 +12,8 @@
     "not_found_on_network": "The heater was not found on the network. Check that it is powered on, or set it up again over Bluetooth.",
     "unreachable": "The heater is unreachable. Homey will keep trying, and search the network for a new IP address.",
     "not_confirmed": "The heater did not confirm the new temperature",
-    "write_timeout": "The heater at __ip__ did not respond in time. Check that it is powered on and has WiFi, then try again."
+    "write_timeout": "The heater at __ip__ did not respond in time. Check that it is powered on and has WiFi, then try again.",
+    "invalid_password_length": "The WiFi password must be 8–63 characters (or 64 hex characters). Leave it empty for an open network."
   },
   "pair": {
     "title": "Set up Adax heater",
@@ -48,6 +49,7 @@
     "reprovision": "Set up again over Bluetooth",
     "reprovision_intro": "Creates a new token. Reset the heater first (see the setup instructions).",
     "found_at": "Heater found at __ip__",
-    "done": "Done"
+    "done": "Done",
+    "show_password": "Show password"
   }
 }

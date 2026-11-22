@@ -36,6 +36,18 @@ export class AdaxHttpError extends Error {
   }
 }
 
+/**
+ * HTTP statuses that mean the heater rejected the token. Heaters tested with
+ * this app (fw 2.0.1.8 / 2.0.2.27) answer 405 to a wrong token; 401/403 are
+ * kept for other firmware.
+ */
+const AUTH_ERROR_STATUSES: ReadonlySet<number> = new Set([401, 403, 405]);
+
+/** True when the heater rejected the token (repair needed). */
+export function isAuthError(err: unknown): err is AdaxHttpError {
+  return err instanceof AdaxHttpError && AUTH_ERROR_STATUSES.has(err.statusCode);
+}
+
 export interface LocalClientOptions {
   ip: string;
   token: string;

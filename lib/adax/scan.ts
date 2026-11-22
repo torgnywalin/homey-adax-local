@@ -41,12 +41,12 @@ export interface FindHeaterOptions {
 }
 
 /**
- * Find the heater that accepts `token` among the candidate IPs.
+ * Find all hosts among the candidate IPs that present the Adax TLS
+ * certificate (CN "ADAX DEVICE"). No token is sent.
  *
- * Only hosts presenting the Adax certificate (CN "ADAX DEVICE") are sent the
- * token, so it is never leaked to other HTTPS servers on the LAN.
+ * Only /24 networks are searched by the callers (see `subnetCandidates`).
  */
-export async function findHeater(candidates: string[], token: string, options: FindHeaterOptions = {}): Promise<string | null> {
+export async function findAdaxHosts(candidates: string[], options: FindHeaterOptions = {}): Promise<string[]> {
   const port = options.port ?? ADAX_LOCAL_PORT;
   const concurrency = options.concurrency ?? 32;
   const probeTimeoutMs = options.probeTimeoutMs ?? 4000; // old heaters need ~2.5 s for the TLS handshake
@@ -64,7 +64,22 @@ export async function findHeater(candidates: string[], token: string, options: F
   };
   await Promise.all(Array.from({ length: Math.min(concurrency, unique.length) }, worker));
   log(`Found ${adaxHosts.length} Adax heater(s) on the network: ${adaxHosts.join(', ')}`);
+  return adaxHosts.sort(compareIp);
+}
 
+/**
+ * Return the first Adax host that accepts `token`, or null.
+ *
+ * Only pass hosts from `findAdaxHosts`, so the token is never sent to other
+ * HTTPS servers on the LAN.
+ */
+export async function findHostAcceptingToken(
+  adaxHosts: string[],
+  token: string,
+  options: Pick<FindHeaterOptions, 'port' | 'log'> = {},
+): Promise<string | null> {
+  const port = options.port ?? ADAX_LOCAL_PORT;
+  const log = options.log ?? (() => undefined);
   for (const ip of adaxHosts) {
     const client = new LocalClient({ ip, token, port, retries: 0, timeoutMs: 5000 });
     try {
@@ -75,4 +90,19 @@ export async function findHeater(candidates: string[], token: string, options: F
     }
   }
   return null;
+}
+
+/** Find the heater that accepts `token` among the candidate IPs. */
+export async function findHeater(candidates: string[], token: string, options: FindHeaterOptions = {}): Promise<string | null> {
+  const hosts = await findAdaxHosts(candidates, options);
+  return findHostAcceptingToken(hosts, token, options);
+}
+
+function compareIp(a: string, b: string): number {
+  const pa = a.split('.').map(Number);
+  const pb = b.split('.').map(Number);
+  for (let i = 0; i < 4; i++) {
+    if (pa[i] !== pb[i]) return pa[i] - pb[i];
+  }
+  return 0;
 }

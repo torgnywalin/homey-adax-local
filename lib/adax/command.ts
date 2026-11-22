@@ -36,3 +36,13 @@ export function chunkCommand(command: Buffer): Buffer[] {
   }
   return chunks;
 }
+
+/**
+ * WPA/WPA2 passphrases are 8–63 characters, or a 64-character hex PSK.
+ * An empty password is allowed for open networks.
+ */
+export function isValidWifiPassword(password: string): boolean {
+  if (password.length === 0) return true;
+  if (password.length >= 8 && password.length <= 63) return true;
+  return /^[0-9a-f]{64}$/i.test(password);
+}

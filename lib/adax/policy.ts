@@ -4,14 +4,18 @@ export type LocalChangeMode = 'allow' | 'limit' | 'lock';
 /** Allowed deviation (°C) from the Homey target in `limit` mode. */
 export const LIMIT_DELTA_C = 3;
 
-const MIN_TARGET_C = 5;
-const MAX_TARGET_C = 35;
+export const MIN_TARGET_C = 5;
+export const MAX_TARGET_C = 35;
+/** Used when the heater is turned on and no earlier target is known. */
+export const DEFAULT_TARGET_C = 20;
+
+export const clampTarget = (c: number) => Math.min(MAX_TARGET_C, Math.max(MIN_TARGET_C, c));
 
 export function parseLocalChangeMode(value: unknown): LocalChangeMode {
   return value === 'limit' || value === 'lock' ? value : 'allow';
 }
 
-const sameTarget = (a: number, b: number) => Math.round(a * 100) === Math.round(b * 100);
+export const sameTarget = (a: number, b: number) => Math.round(a * 100) === Math.round(b * 100);
 
 /**
  * Decide whether a target set on the heater itself must be corrected.
@@ -60,4 +64,26 @@ export function correctLocalChange(
 export function estimatePowerW(ratedPowerW: number, heaterTargetC: number, currentC: number): number {
   if (!Number.isFinite(ratedPowerW) || ratedPowerW <= 0) return 0;
   return heaterTargetC > 0 && currentC < heaterTargetC ? ratedPowerW : 0;
+}
+
+/**
+ * Target (°C, 0 = off) for a capability change from Homey.
+ *
+ * - onoff=false turns the heater off.
+ * - A target temperature is rounded and clamped, and also turns the heater on.
+ * - onoff=true alone uses the first positive fallback (last Homey target,
+ *   last heater target, …), or DEFAULT_TARGET_C.
+ */
+export function targetFromCapabilities(
+  values: { onoff?: boolean; target_temperature?: number },
+  fallbacks: ReadonlyArray<number | null | undefined>,
+): number {
+  if (values.onoff === false) return 0;
+  if (typeof values.target_temperature === 'number' && Number.isFinite(values.target_temperature)) {
+    return clampTarget(Math.round(values.target_temperature));
+  }
+  for (const fallback of fallbacks) {
+    if (typeof fallback === 'number' && Number.isFinite(fallback) && fallback > 0) return clampTarget(fallback);
+  }
+  return DEFAULT_TARGET_C;
 }

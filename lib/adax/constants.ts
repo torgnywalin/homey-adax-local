@@ -14,11 +14,12 @@ export const ADAX_BLE_COMMAND_UUID = '0000cc11-0000-1000-8000-00805f9b34fb';
 /**
  * Device types (first manufacturer-data byte) that support BLE provisioning.
  * 5  = Gen 2 heater (officially documented)
+ * 8  = Gen 2 "WiFi Heater VG11" (tested with this app, fw 2.0.2.27)
  * 9  = some newer panel heaters (works per pyAdaxLocal PR #23, not merged)
  * 11 = Gen 3 "WT3" thermostat (Adax)
  * 17 = Gen 3 "WT3" thermostat (Glamox)
  */
-export const ADAX_BLE_DEVICE_TYPES: ReadonlySet<number> = new Set([5, 9, 11, 17]);
+export const ADAX_BLE_DEVICE_TYPES: ReadonlySet<number> = new Set([5, 8, 9, 11, 17]);
 
 /** Max payload bytes per BLE write (2 header bytes + 17 = 19 bytes per write). */
 export const MAX_BYTES_IN_COMMAND_CHUNK = 17;

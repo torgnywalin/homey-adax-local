@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { parseAdvertisement, isAvailableForProvisioning, isKnownType } from '../lib/adax/advertisement';
-import { buildJoinCommand, chunkCommand, generateToken, pyQuote } from '../lib/adax/command';
+import { buildJoinCommand, chunkCommand, generateToken, isValidWifiPassword, pyQuote } from '../lib/adax/command';
 import { parseJoinNotification } from '../lib/adax/notification';
 import { normalizeUuid, uuidEquals } from '../lib/adax/uuid';
 import { ADAX_BLE_COMMAND_UUID, ADAX_BLE_SERVICE_UUID } from '../lib/adax/constants';
@@ -38,7 +38,7 @@ test('parseAdvertisement: type 8 Gen 2 heater seen on Homey Pro (2026-11)', () =
   assert.equal(adv.status, 0);
   assert.equal(adv.wifiMac, '80:64:6f:a1:b2:c3');
   assert.equal(isAvailableForProvisioning(adv), true);
-  assert.equal(isKnownType(adv), false);
+  assert.equal(isKnownType(adv), true);
 });
 
 test('parseAdvertisement: too short / missing data', () => {
@@ -117,4 +117,13 @@ test('subnetCandidates', () => {
   assert.equal(c[0], '192.168.1.1');
   assert.equal(c[253], '192.168.1.254');
   assert.deepEqual(subnetCandidates('not-an-ip'), []);
+});
+
+test('isValidWifiPassword', () => {
+  assert.equal(isValidWifiPassword(''), true);
+  assert.equal(isValidWifiPassword('1234567'), false);
+  assert.equal(isValidWifiPassword('12345678'), true);
+  assert.equal(isValidWifiPassword('x'.repeat(63)), true);
+  assert.equal(isValidWifiPassword('x'.repeat(64)), false);
+  assert.equal(isValidWifiPassword('aB'.repeat(32)), true);
 });

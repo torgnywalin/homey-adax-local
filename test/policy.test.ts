@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { correctLocalChange, estimatePowerW, parseLocalChangeMode } from '../lib/adax/policy';
+import { correctLocalChange, DEFAULT_TARGET_C, estimatePowerW, parseLocalChangeMode, targetFromCapabilities } from '../lib/adax/policy';
 
 test('parseLocalChangeMode defaults to allow', () => {
   assert.equal(parseLocalChangeMode('lock'), 'lock');
@@ -50,4 +50,12 @@ test('estimatePowerW: rated power only while heating', () => {
   assert.equal(estimatePowerW(800, 0, 15), 0); // off
   assert.equal(estimatePowerW(0, 22, 15), 0); // not configured
   assert.equal(estimatePowerW(Number.NaN, 22, 15), 0);
+});
+
+test('targetFromCapabilities', () => {
+  assert.equal(targetFromCapabilities({ onoff: false, target_temperature: 22 }, []), 0);
+  assert.equal(targetFromCapabilities({ target_temperature: 21.4 }, []), 21);
+  assert.equal(targetFromCapabilities({ target_temperature: 2 }, []), 5);
+  assert.equal(targetFromCapabilities({ onoff: true }, [null, 0, 18]), 18);
+  assert.equal(targetFromCapabilities({ onoff: true }, [undefined, null]), DEFAULT_TARGET_C);
 });

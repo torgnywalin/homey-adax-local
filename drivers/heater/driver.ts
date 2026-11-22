@@ -8,7 +8,10 @@ import {
   InvalidWifiError,
   WriteWithoutResponseOnlyError,
 } from '../../lib/adax/BleProvisioner';
-import { AdaxHttpError, LocalClient } from '../../lib/adax/LocalClient';
+import { isValidWifiPassword } from '../../lib/adax/command';
+import { AdaxHttpError, isAuthError, LocalClient } from '../../lib/adax/LocalClient';
+import { parseLocalChangeMode } from '../../lib/adax/policy';
+import { findAdaxHosts, findHostAcceptingToken, subnetCandidates } from '../../lib/adax/scan';
 import type AdaxHeaterDevice = require('./device');
 
 type PairSession = Parameters<Homey.Driver['onPair']>[0];
@@ -22,11 +25,62 @@ interface PendingDevice {
   deviceType: number | null;
 }
 
+interface FlowDeviceArgs {
+  device: AdaxHeaterDevice;
+  mode: string;
+}
+
+/** An automatic rediscovery reuses a network scan this recent (e.g. all heaters lost after a router restart). */
+const HOST_SCAN_REUSE_MS = 2 * 60 * 1000;
+
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 class AdaxHeaterDriver extends Homey.Driver {
+  private localChangeTrigger!: Homey.FlowCardTriggerDevice;
+  private hostScan: Promise<string[]> | null = null;
+  private lastHostScan: { hosts: string[]; finishedAt: number } | null = null;
+
   async onInit() {
+    this.localChangeTrigger = this.homey.flow.getDeviceTriggerCard('local_change');
+    this.homey.flow.getConditionCard('local_changes_is')
+      .registerRunListener(async (args: FlowDeviceArgs) => args.device.getLocalChangeMode() === args.mode);
+    this.homey.flow.getActionCard('set_local_changes')
+      .registerRunListener(async (args: FlowDeviceArgs) => args.device.setLocalChangeMode(parseLocalChangeMode(args.mode)));
     this.log('Adax heater driver initialized');
+  }
+
+  triggerLocalChange(device: AdaxHeaterDevice, tokens: { temperature: number; corrected: boolean }) {
+    return this.localChangeTrigger.trigger(device, tokens);
+  }
+
+  /**
+   * Find the heater that accepts `token` on the local network. The scan for
+   * Adax hosts is shared by all heaters: a scan in progress is joined, and a
+   * recent one is reused unless `fresh` is set.
+   */
+  async findHeaterOnNetwork(token: string, fresh = false): Promise<string | null> {
+    const hosts = await this.scanAdaxHosts(fresh ? 0 : HOST_SCAN_REUSE_MS);
+    return findHostAcceptingToken(hosts, token, { log: this.log.bind(this) });
+  }
+
+  private scanAdaxHosts(maxAgeMs: number): Promise<string[]> {
+    if (this.hostScan) return this.hostScan;
+    if (this.lastHostScan && Date.now() - this.lastHostScan.finishedAt < maxAgeMs) {
+      return Promise.resolve(this.lastHostScan.hosts);
+    }
+    this.hostScan = (async () => {
+      // The /24 of every heater's last known IP, plus Homey's own network.
+      const candidates = this.getDevices().flatMap((device) => subnetCandidates(device.getStoreValue('ip')));
+      const homeyAddress = await this.homey.cloud.getLocalAddress().catch(() => '');
+      candidates.push(...subnetCandidates(homeyAddress.split(':')[0]));
+      this.log(`Searching ${new Set(candidates).size} addresses for Adax heaters`);
+      const hosts = await findAdaxHosts(candidates, { log: this.log.bind(this) });
+      this.lastHostScan = { hosts, finishedAt: Date.now() };
+      return hosts;
+    })().finally(() => {
+      this.hostScan = null;
+    });
+    return this.hostScan;
   }
 
   async onPair(session: PairSession) {
@@ -86,7 +140,7 @@ class AdaxHeaterDriver extends Homey.Driver {
     });
 
     session.setHandler('rediscover', async () => {
-      const ip = await heater.rediscover();
+      const ip = await heater.rediscover(true);
       if (!ip) throw new Error(this.homey.__('errors.not_found_on_network'));
       return { ip };
     });
@@ -116,6 +170,7 @@ class AdaxHeaterDriver extends Homey.Driver {
     const ssid = String(data.ssid ?? '');
     const password = String(data.password ?? '');
     if (!ssid) throw new Error(this.homey.__('errors.missing_ssid'));
+    if (!isValidWifiPassword(password)) throw new Error(this.homey.__('errors.invalid_password_length'));
 
     const emitProgress = (step: string) => session.emit('progress', this.homey.__(`pair.progress.${step}`)).catch(this.error);
 
@@ -153,8 +208,8 @@ class AdaxHeaterDriver extends Homey.Driver {
     if (err instanceof InvalidWifiError) return new Error(this.homey.__('errors.invalid_wifi'));
     if (err instanceof WriteWithoutResponseOnlyError) return new Error(this.homey.__('errors.write_without_response'));
     if (err instanceof HeaterNotFoundError) return new Error(this.homey.__('errors.heater_not_found'));
+    if (isAuthError(err)) return new Error(this.homey.__('errors.unauthorized'));
     if (err instanceof AdaxHttpError) {
-      if (err.statusCode === 401 || err.statusCode === 403) return new Error(this.homey.__('errors.unauthorized'));
       return new Error(this.homey.__('errors.http', { status: err.statusCode }));
     }
     if (ip) return new Error(this.homey.__('errors.no_answer', { ip, message: (err as Error)?.message ?? String(err) }));

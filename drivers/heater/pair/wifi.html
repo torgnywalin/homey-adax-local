@@ -17,8 +17,14 @@
     </div>
     <div class="homey-form-group">
       <label class="homey-form-label" for="password" data-i18n="pair.password"></label>
-      <input class="homey-form-input" id="password" type="password" autocomplete="off" />
+      <input class="homey-form-input" id="password" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" />
+      <p id="password-error" class="adax-status adax-error"></p>
     </div>
+    <label class="homey-form-checkbox">
+      <input class="homey-form-checkbox-input" id="show-password" type="checkbox" />
+      <span class="homey-form-checkbox-checkmark"></span>
+      <span class="homey-form-checkbox-text" data-i18n="pair.show_password"></span>
+    </label>
   </fieldset>
 
   <p id="progress" class="adax-status"></p>
@@ -29,6 +35,7 @@
   .adax-status { min-height: 1.2em; font-size: 0.9em; opacity: 0.8; margin: 0.5em 0; }
   .adax-heater { display: flex; align-items: center; gap: 0.5em; padding: 0.4em 0; }
   .adax-heater.unavailable { opacity: 0.5; }
+  .adax-error { color: var(--homey-color-danger, #e53935); opacity: 1; }
 </style>
 
 <script type="application/javascript">
@@ -39,6 +46,8 @@
   const progressEl = document.getElementById('progress');
   const ssidEl = document.getElementById('ssid');
   const passwordEl = document.getElementById('password');
+  const passwordError = document.getElementById('password-error');
+  const showPassword = document.getElementById('show-password');
 
   Homey.on('progress', (message) => { progressEl.textContent = message; });
 
@@ -47,8 +56,20 @@
     return checked ? checked.value : null;
   }
 
+  // Same rule as isValidWifiPassword in lib/adax/command.ts: WPA needs 8–63
+  // characters or a 64-character hex key; empty means an open network.
+  function passwordValid() {
+    const p = passwordEl.value;
+    return p.length === 0 || (p.length >= 8 && p.length <= 63) || /^[0-9a-f]{64}$/i.test(p);
+  }
+
+  let passwordTouched = false;
+
   function updateConnectState() {
-    connectButton.disabled = !selectedHeater() || !ssidEl.value;
+    const valid = passwordValid();
+    // Only complain once the user has left the field, not while typing.
+    passwordError.textContent = valid || !passwordTouched ? '' : Homey.__('errors.invalid_password_length');
+    connectButton.disabled = !selectedHeater() || !ssidEl.value || !valid;
   }
 
   function renderHeaters(heaters) {
@@ -115,6 +136,9 @@
   }
 
   ssidEl.addEventListener('input', updateConnectState);
+  passwordEl.addEventListener('input', updateConnectState);
+  passwordEl.addEventListener('change', () => { passwordTouched = true; updateConnectState(); });
+  showPassword.addEventListener('change', () => { passwordEl.type = showPassword.checked ? 'text' : 'password'; });
   scanButton.addEventListener('click', scan);
   connectButton.addEventListener('click', connect);
   scan();

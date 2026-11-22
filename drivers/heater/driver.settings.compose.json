@@ -64,8 +64,8 @@
       "no": "W"
     },
     "hint": {
-      "en": "The heater's rated power (see the label on the heater). Homey shows this power while the heater is heating (on and below target temperature) and calculates energy from it. 0 = not set. This is an estimate: the heater does not measure power.",
-      "no": "Ovnens merkeeffekt (se merkeskiltet på ovnen). Homey viser denne effekten mens ovnen varmer (på og under måltemperatur), og regner ut energi fra den. 0 = ikke satt. Dette er et estimat: ovnen måler ikke effekt."
+      "en": "The heater's rated power (see the label on the heater). Homey shows this power while the heater is heating (on and below target temperature) and calculates energy from it. 0 = not set (no power is shown). This is an estimate: the heater does not measure power.",
+      "no": "Ovnens merkeeffekt (se merkeskiltet på ovnen). Homey viser denne effekten mens ovnen varmer (på og under måltemperatur), og regner ut energi fra den. 0 = ikke satt (ingen effekt vises). Dette er et estimat: ovnen måler ikke effekt."
     }
   },
   {

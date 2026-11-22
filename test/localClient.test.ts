@@ -6,7 +6,7 @@ import https from 'node:https';
 import { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { AdaxHttpError, AdaxTimeoutError, LocalClient } from '../lib/adax/LocalClient';
+import { AdaxHttpError, AdaxTimeoutError, isAuthError, LocalClient } from '../lib/adax/LocalClient';
 import { findHeater, probeCertificateCN } from '../lib/adax/scan';
 
 const TOKEN = '0123456789abcdef0123';
@@ -182,4 +182,10 @@ test('a write queued behind a slow request respects its deadline', async () => {
   } finally {
     heater.delayMs = 20;
   }
+});
+
+test('isAuthError: 401, 403 and 405 (wrong token on real heaters) mean the token was rejected', () => {
+  for (const status of [401, 403, 405]) assert.equal(isAuthError(new AdaxHttpError(status, '')), true, String(status));
+  for (const status of [400, 404, 500]) assert.equal(isAuthError(new AdaxHttpError(status, '')), false, String(status));
+  assert.equal(isAuthError(new Error('ECONNREFUSED')), false);
 });
