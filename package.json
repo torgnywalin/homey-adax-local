@@ -1,6 +1,6 @@
 {
   "name": "no.walin.adax",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Local control of Adax WiFi heaters for Homey Pro",
   "main": "app.js",
